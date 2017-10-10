@@ -39,6 +39,7 @@
 #include "ros/advertise_options.h"
 #include "ros/names.h"
 #include "ros/param.h"
+#include <tracetools/tracetools.h>
 
 #include <rosgraph_msgs/Log.h>
 
@@ -104,7 +105,7 @@ void ROSOutAppender::log(::ros::console::Level level, const char* str, const cha
   msg->file = file;
   msg->function = function;
   msg->line = line;
-  
+
   // check parameter server/cache for omit_topics flag
   // the same parameter is checked in rosout.py for the same purpose
   ros::param::getCached("/rosout_disable_topics_generation", disable_topics_);
@@ -125,6 +126,8 @@ void ROSOutAppender::log(::ros::console::Level level, const char* str, const cha
 
 void ROSOutAppender::logThread()
 {
+  ros::trace::task_init("rosout appender");
+
   while (!shutting_down_)
   {
     V_Log local_queue;

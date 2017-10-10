@@ -31,6 +31,7 @@
 #include "ros/forwards.h"
 #include "ros/time.h"
 #include "ros/file_log.h"
+#include <tracetools/tracetools.h>
 
 #include <boost/thread/condition_variable.hpp>
 #include <boost/thread/thread.hpp>
@@ -463,12 +464,12 @@ void TimerManager<T, D, E>::setPeriod(int32_t handle, const D& period, bool rese
 
   {
     boost::mutex::scoped_lock lock(waiting_mutex_);
-  
+
     if(reset)
     {
       info->next_expected = T::now() + period;
     }
-    
+
     // else if some time has elapsed since last cb (called outside of cb)
     else if( (T::now() - info->last_real) < info->period)
     {
@@ -478,17 +479,17 @@ void TimerManager<T, D, E>::setPeriod(int32_t handle, const D& period, bool rese
       {
         info->next_expected = T::now();
       }
-   
+
       // else, account for elapsed time by using last_real+period
       else
       {
         info->next_expected = info->last_real + period;
       }
     }
-    
+
     // Else if called in a callback, last_real has not been updated yet => (now - last_real) > period
     // In this case, let next_expected be updated only in updateNext
-    
+
     info->period = period;
     waiting_.sort(boost::bind(&TimerManager::waitingCompare, this, boost::placeholders::_1, boost::placeholders::_2));
   }
@@ -548,6 +549,7 @@ void TimerManager<T, D, E>::threadFunc()
 
           //ROS_DEBUG("Scheduling timer callback for timer [%d] of period [%f], [%f] off expected", info->handle, info->period.toSec(), (current - info->next_expected).toSec());
           CallbackInterfacePtr cb(boost::make_shared<TimerQueueCallback>(this, info, info->last_expected, info->last_real, info->next_expected, info->last_expired, current));
+          ros::trace::timer_scheduled(cb.get(), (void*)info->callback.functor.func_ptr);
           info->callback_queue->addCallback(cb, (uint64_t)info.get());
 
           waiting_.pop_front();

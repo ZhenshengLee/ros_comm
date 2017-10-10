@@ -47,6 +47,7 @@
 #include "xmlrpcpp/XmlRpc.h"
 
 #include <boost/thread.hpp>
+#include <tracetools/tracetools.h>
 
 namespace ros
 {
@@ -424,6 +425,10 @@ Timer NodeHandle::createTimer(TimerOptions& ops) const
   }
 
   Timer timer(ops);
+  ros::trace::timer_added((const void*)ops.callback.functor.func_ptr,
+		  ros::trace::impl::get_backtrace().c_str(),
+		  ops.period.sec, ops.period.nsec);
+
   if (ops.autostart)
     timer.start();
   return timer;
@@ -455,6 +460,10 @@ WallTimer NodeHandle::createWallTimer(WallTimerOptions& ops) const
   }
 
   WallTimer timer(ops);
+  ros::trace::timer_added(&(ops.callback),
+		  ros::trace::impl::get_backtrace().c_str(),
+		  ops.period.sec, ops.period.nsec);
+
   if (ops.autostart)
     timer.start();
   return timer;
