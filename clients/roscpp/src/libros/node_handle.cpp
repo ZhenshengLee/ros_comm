@@ -124,7 +124,7 @@ NodeHandle::NodeHandle(const NodeHandle& rhs)
   remappings_ = rhs.remappings_;
   unresolved_remappings_ = rhs.unresolved_remappings_;
 
-  construct(rhs.namespace_, true); 
+  construct(rhs.namespace_, true);
 
   unresolved_namespace_ = rhs.unresolved_namespace_;
 }
@@ -302,7 +302,7 @@ Publisher NodeHandle::advertise(AdvertiseOptions& ops)
     }
   }
 
-  SubscriberCallbacksPtr callbacks(boost::make_shared<SubscriberCallbacks>(ops.connect_cb, ops.disconnect_cb, 
+  SubscriberCallbacksPtr callbacks(boost::make_shared<SubscriberCallbacks>(ops.connect_cb, ops.disconnect_cb,
                                                                            ops.tracked_object, ops.callback_queue));
 
   Publisher pub(ops.topic, ops.md5sum, ops.datatype, ops.latch, *this, callbacks);
@@ -399,7 +399,7 @@ ServiceClient NodeHandle::serviceClient(ServiceClientOptions& ops)
   return client;
 }
 
-Timer NodeHandle::createTimer(Duration period, const TimerCallback& callback, 
+Timer NodeHandle::createTimer(Duration period, const TimerCallback& callback,
                               bool oneshot, bool autostart) const
 {
   TimerOptions ops;
@@ -426,15 +426,15 @@ Timer NodeHandle::createTimer(TimerOptions& ops) const
 
   Timer timer(ops);
   ros::trace::timer_added((const void*)ops.callback.functor.func_ptr,
-		  ros::trace::impl::get_backtrace().c_str(),
-		  ops.period.sec, ops.period.nsec);
+    ros::trace::impl::get_backtrace().c_str(),
+    ops.period.sec, ops.period.nsec);
 
   if (ops.autostart)
     timer.start();
   return timer;
 }
 
-WallTimer NodeHandle::createWallTimer(WallDuration period, const WallTimerCallback& callback, 
+WallTimer NodeHandle::createWallTimer(WallDuration period, const WallTimerCallback& callback,
                                       bool oneshot, bool autostart) const
 {
   WallTimerOptions ops;
@@ -461,8 +461,8 @@ WallTimer NodeHandle::createWallTimer(WallTimerOptions& ops) const
 
   WallTimer timer(ops);
   ros::trace::timer_added(&(ops.callback),
-		  ros::trace::impl::get_backtrace().c_str(),
-		  ops.period.sec, ops.period.nsec);
+    ros::trace::impl::get_backtrace().c_str(),
+    ops.period.sec, ops.period.nsec);
 
   if (ops.autostart)
     timer.start();
