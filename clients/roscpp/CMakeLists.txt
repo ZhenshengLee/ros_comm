@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(roscpp)
 
-add_definitions("-std=c++11")
 if(NOT WIN32)
   set_directory_properties(PROPERTIES COMPILE_OPTIONS "-Wall;-Wextra")
 endif()
