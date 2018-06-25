@@ -549,7 +549,7 @@ void TimerManager<T, D, E>::threadFunc()
 
           //ROS_DEBUG("Scheduling timer callback for timer [%d] of period [%f], [%f] off expected", info->handle, info->period.toSec(), (current - info->next_expected).toSec());
           CallbackInterfacePtr cb(boost::make_shared<TimerQueueCallback>(this, info, info->last_expected, info->last_real, info->next_expected, info->last_expired, current));
-          ros::trace::timer_scheduled(cb.get(), (void*)info->callback.functor.func_ptr);
+          ros::trace::timer_scheduled(cb.get(), ros::trace::get_ptr(info->callback));
           info->callback_queue->addCallback(cb, (uint64_t)info.get());
 
           waiting_.pop_front();
