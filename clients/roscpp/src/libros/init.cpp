@@ -629,6 +629,8 @@ void shutdown()
   g_started = false;
   g_ok = false;
   Time::shutdown();
+
+  ros::trace::node_shutdown(this_node::getName().c_str());
 }
 
 const std::string& getDefaultMasterURI() {
